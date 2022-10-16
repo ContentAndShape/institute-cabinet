@@ -4,7 +4,8 @@ from .mixins import NameMixin, UserReprMixin
 
 
 class Course(NameMixin):
-    related_institute = models.ForeignKey('Institute', null=True, on_delete=models.SET_NULL)
+    related_institute = models.ForeignKey(
+        'Institute', related_name='courses', null=True, on_delete=models.SET_NULL)
 
 
 class Institute(NameMixin):
@@ -12,7 +13,8 @@ class Institute(NameMixin):
 
 
 class Student(UserReprMixin):
-    institute = models.ForeignKey('Institute', null=True, on_delete=models.SET_NULL)
+    institute = models.ForeignKey(
+        'Institute', related_name='students', null=True, on_delete=models.SET_NULL)
 
 
 class Teacher(UserReprMixin):
