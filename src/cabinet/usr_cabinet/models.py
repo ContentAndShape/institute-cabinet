@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
-class UserRepr(User):
+class UserReprMixin(User):
 
     def __str__(self) -> str:
         return self.get_full_name()
@@ -27,10 +27,10 @@ class Institute(NameMixin):
     ...
 
 
-class Student(UserIdMixin, UserRepr):
+class Student(UserIdMixin, UserReprMixin):
     institute = models.ForeignKey('Institute', on_delete=models.CASCADE)
 
 
-class Teacher(UserIdMixin, UserRepr):
+class Teacher(UserIdMixin, UserReprMixin):
     courses = models.ManyToManyField('Course')
 
