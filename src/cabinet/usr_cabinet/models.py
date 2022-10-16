@@ -8,10 +8,6 @@ class UserReprMixin(User):
         return self.get_full_name()
 
 
-class UserIdMixin(models.Model):
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-
-
 class NameMixin(models.Model):
     name = models.CharField(max_length=50)
 
@@ -20,17 +16,17 @@ class NameMixin(models.Model):
 
 
 class Course(NameMixin):
-    related_institute = models.ForeignKey('Institute', on_delete=models.SET_NULL)
+    related_institute = models.ForeignKey('Institute', null=True, on_delete=models.SET_NULL)
 
 
 class Institute(NameMixin):
     ...
 
 
-class Student(UserIdMixin, UserReprMixin):
+class Student(UserReprMixin):
     institute = models.ForeignKey('Institute', on_delete=models.CASCADE)
 
 
-class Teacher(UserIdMixin, UserReprMixin):
+class Teacher(UserReprMixin):
     courses = models.ManyToManyField('Course')
 
