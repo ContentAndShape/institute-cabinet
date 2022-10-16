@@ -10,6 +10,7 @@ packages = [{include = "institute_cabinet"}]
 python = "^3.10"
 psycopg2-binary = "^2.9.4"
 Django = "^4.1.2"
+uvicorn = "^0.18.3"
 
 
 [build-system]
