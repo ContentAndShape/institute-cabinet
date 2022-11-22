@@ -3,18 +3,12 @@
 {% block content %}
     <div class="basic_cabinet">
 
-        {% if user.is_anonymous %}
-            {% include "usr_cabinet/anon_cabinet.html" %}
-        {% endif %}
-        
-        {% if user.is_authenticated %}
-            {% if user_type == 'Student' %}
-                {% include "usr_cabinet/student_cabinet.html" %}
-            {% elif user_type == 'Teacher' %}
-                {% include "usr_cabinet/teacher_cabinet.html" %}
-            {% else %}
-                {% include "usr_cabinet/user_cabinet.html" %}
-            {% endif %}
+        {% if user_type == 'Student' %}
+            {% include "usr_cabinet/student_cabinet.html" %}
+        {% elif user_type == 'Teacher' %}
+            {% include "usr_cabinet/teacher_cabinet.html" %}
+        {% else %}
+            {% include "usr_cabinet/user_cabinet.html" %}
         {% endif %}
 
     </div>

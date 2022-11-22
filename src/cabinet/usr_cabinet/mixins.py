@@ -1,8 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import User
 
-
-class UserReprMixin(User):
+class UserReprMixin():
 
     class Meta:
         abstract = True
@@ -13,6 +11,7 @@ class UserReprMixin(User):
 
 
 class NameMixin(models.Model):
+    '''Used for naming inanimate entities'''
     name = models.CharField(max_length=100)
 
     class Meta:
@@ -21,3 +20,15 @@ class NameMixin(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+
+class UserIdMixin(models.Model):
+    user = models.OneToOneField(
+        'User',
+        on_delete=models.CASCADE,
+        unique=True,
+        primary_key=True,
+    )
+
+    class Meta:
+        abstract = True

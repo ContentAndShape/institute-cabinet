@@ -37,6 +37,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "auth_.apps.Auth_Config",
     "usr_cabinet.apps.UsrCabinetConfig",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -75,6 +76,13 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "cabinet.wsgi.application"
+
+AUTH_USER_MODEL = "usr_cabinet.User"
+ALLOWED_USER_TYPES = {
+    1: 'staff',
+    2: 'student',
+    3: 'teacher',
+}
 
 
 # Database

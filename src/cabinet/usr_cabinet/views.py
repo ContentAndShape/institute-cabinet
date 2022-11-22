@@ -1,11 +1,10 @@
 from django.http import HttpRequest, HttpResponse
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 
 
+@login_required(login_url="/login/")
 def cabinet(request: HttpRequest) -> HttpResponse:
-
-    if request.user.is_authenticated == False:
-        return redirect("login/")
 
     context = {
         'user': request.user,
