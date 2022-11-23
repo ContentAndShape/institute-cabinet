@@ -113,7 +113,7 @@ class User(AbstractBaseUser):
 
 
 class Course(NameMixin):
-    related_institute = models.ManyToManyField(
+    institutes = models.ManyToManyField(
         "Institute",
         default=None,
     )
