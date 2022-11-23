@@ -33,14 +33,6 @@ class UserCreationTestCase(TestCase):
         self.assertEqual(staff, User.objects.get(email=STAFF['email']))
         self.assertEqual(student, User.objects.get(email=STUDENT['email']))
         self.assertEqual(teacher, User.objects.get(email=TEACHER['email']))
-        
-
-    def test_user_fields(self):
-        staff = User.objects.get(email=STAFF['email'])
-        student = User.objects.get(email=STUDENT['email'])
-        teacher = User.objects.get(email=TEACHER['email'])
-
-        #TODO test user fields values
 
     def test_invalid_fields(self):
         with self.assertRaises(TypeError):
@@ -74,25 +66,45 @@ class UserRelationsTestCase(TestCase):
         teacher_type = UserType.objects.get(type='teacher')
         self.assertEqual(teacher_type, teacher.type)
 
-        # TODO test type set to null after type del in type table
+        # User type cascade drop
+        staff_type.delete()
+        staff = User.objects.get(email=STAFF['email'])
+        self.assertEqual(staff.type, None)
+        student_type.delete()
+        student = User.objects.get(email=STUDENT['email'])
+        self.assertEqual(student.type, None)
+        teacher_type.delete()
+        teacher = User.objects.get(email=TEACHER['email'])
+        self.assertEqual(teacher.type, None)
 
     def test_student_table(self):
-        student_user = User.objects.get(email=STUDENT['email'])
+        student_user: User = User.objects.get(email=STUDENT['email'])
         Student.objects.get(user_id=student_user.id)
 
+        # Query non-existing id
         with self.assertRaises(Student.DoesNotExist):
             Student.objects.get(user_id=10000)
 
-        # TODO test cascade drop after user del
+        # Cascade delete student after user drop
+        deleted_user_id = student_user.id
+        student_user.delete()
+        
+        with self.assertRaises(Student.DoesNotExist):
+            Student.objects.get(user_id=deleted_user_id)
 
     def test_teacher_table(self):
-        teacher_user = User.objects.get(email=TEACHER['email'])
+        teacher_user: User = User.objects.get(email=TEACHER['email'])
         Teacher.objects.get(user_id=teacher_user.id)
 
         with self.assertRaises(Teacher.DoesNotExist):
             Teacher.objects.get(user_id=10000)
 
-        # TODO test cascade drop after user del
+        # Cascade delete teacher after user drop
+        deleted_user_id = teacher_user.id
+        teacher_user.delete()
+
+        with self.assertRaises(Teacher.DoesNotExist):
+            Teacher.objects.get(user_id=deleted_user_id)
 
     def test_institute_table(self):
         ...
