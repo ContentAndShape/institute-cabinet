@@ -17,12 +17,9 @@ class Manager_(BaseUserManager):
         return teacher
 
     def create_user(
-        self, 
-        email: str, 
-        type: int, 
-        password: str = None, 
-        **other_fields) -> object:
-        '''Creates, saves to db and returns created user'''
+        self, email: str, type: int, password: str = None, **other_fields
+    ) -> object:
+        """Creates, saves to db and returns created user"""
 
         if not email:
             raise ValueError("Email should have been provided")
@@ -37,7 +34,6 @@ class Manager_(BaseUserManager):
 
         type = UserType(
             enum=type,
-            type=ALLOWED_USER_TYPES[type],
         )
         type.save(using=self._db)
 
@@ -46,7 +42,7 @@ class Manager_(BaseUserManager):
             type=type,
             **other_fields,
         )
-        
+
         user.set_password(password)
         user.save(using=self._db)
         print(f"Saved user with type {user.type.enum} {user.type.__class__.__name__}")
@@ -66,11 +62,8 @@ class Manager_(BaseUserManager):
         return user
 
     def create_superuser(
-        self, 
-        email: str, 
-        type: str, 
-        password: str = None, 
-        **other_fields) -> object:
+        self, email: str, type: str, password: str = None, **other_fields
+    ) -> object:
         user = self.create_user(
             email=email,
             type=type,
@@ -87,10 +80,8 @@ class Manager_(BaseUserManager):
 class User(AbstractBaseUser):
     email = models.EmailField(max_length=50, unique=True)
     type = models.ForeignKey(
-        'UserType', 
-        null=True, 
-        on_delete=models.SET_NULL, 
-        related_name='users')
+        "UserType", null=True, on_delete=models.SET_NULL, related_name="users"
+    )
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     is_active = models.BooleanField(default=True)
@@ -98,9 +89,9 @@ class User(AbstractBaseUser):
 
     objects = Manager_()
 
-    USERNAME_FIELD = 'email'
-    EMAIL_FIELD = 'email'
-    REQUIRED_FIELDS = ['type']
+    USERNAME_FIELD = "email"
+    EMAIL_FIELD = "email"
+    REQUIRED_FIELDS = ["type"]
 
     # TODO Maybe someone else could be a staff member?
     @property
@@ -121,13 +112,11 @@ class User(AbstractBaseUser):
         return True if self.is_admin else False
 
 
-
 class Course(NameMixin):
-    related_institute = models.ForeignKey(
-        'Institute', 
-        related_name='courses', 
-        null=True, 
-        on_delete=models.SET_NULL)
+    related_institute = models.ManyToManyField(
+        "Institute",
+        default=None,
+    )
 
 
 class Institute(NameMixin):
@@ -135,23 +124,31 @@ class Institute(NameMixin):
 
 
 class UserType(models.Model):
-    type = models.CharField(max_length=10, unique=True)
-    enum = models.IntegerField(unique=True, primary_key=True)
+    class Type(models.IntegerChoices):
+        STAFF = 1
+        STUDENT = 2
+        TEACHER = 3
+
+    enum = models.IntegerField(
+        choices=Type.choices, 
+        unique=True, 
+        primary_key=True,
+    )
 
 
 class Student(UserIdMixin):
     institute = models.ForeignKey(
-        'Institute', 
-        related_name='students', 
+        "Institute",
+        related_name="students",
         null=True,
-        default=None, 
-        on_delete=models.SET_NULL)
+        default=None,
+        on_delete=models.SET_NULL,
+    )
 
     objects = Manager_()
 
 
 class Teacher(UserIdMixin):
-    courses = models.ManyToManyField('Course', default=None)
-    # teacher.courses.add(course) to add course
+    courses = models.ManyToManyField("Course", default=None)
 
     objects = Manager_()
